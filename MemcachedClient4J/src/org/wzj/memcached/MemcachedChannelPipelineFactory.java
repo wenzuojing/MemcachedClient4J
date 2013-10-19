@@ -18,7 +18,7 @@ public class MemcachedChannelPipelineFactory  implements ChannelPipelineFactory 
 		
 		ChannelPipeline pipeline = Channels.pipeline();
 		
-		pipeline.addLast("stringEncoder", new StringEncoder(MemcachedConstants.DEFAULT_CHARSET)) ;
+		//pipeline.addLast("stringEncoder", new StringEncoder(MemcachedConstants.DEFAULT_CHARSET)) ;
 		
 		pipeline.addLast("reply", new ReplyHandler()) ;
 		
