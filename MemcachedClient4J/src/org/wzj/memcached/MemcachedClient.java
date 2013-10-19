@@ -1,5 +1,6 @@
 package org.wzj.memcached;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
@@ -74,8 +75,10 @@ public class MemcachedClient {
 
 	private OperationFutrue ayncStore(String cmd, String key, Object value,
 			Date expiry) {
+		
 		CountDownLatch latch = new CountDownLatch(1);
 		OperationFutrue futrue = new OperationFutrue(latch);
+		
 		Operaction operation = oFactory.createStore(cmd, key, value, expiry,
 				futrue);
 
@@ -87,6 +90,16 @@ public class MemcachedClient {
 	private OperationFutrue ayncGet(String cmd, String[] keys) {
 
 		return null;
+	}
+	
+	public void shutdown(){
+		Collection<MemcachedNode> allMemcachedNodes = memcachedNodeFactory.getAllMemcachedNodes()  ;
+		
+		for(MemcachedNode node  : allMemcachedNodes){
+			node.destory(); 
+		}
+		
+		Connection.getInstance().shutdown(); 
 	}
 
 }

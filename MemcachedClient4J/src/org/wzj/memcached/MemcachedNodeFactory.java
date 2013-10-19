@@ -18,6 +18,8 @@ public class MemcachedNodeFactory {
 		if (servers == null || servers.length == 0) {
 			throw new IllegalArgumentException("Must include at least one node");
 		}
+		
+		Connection.getInstance().init(servers) ;
 
 		MemcachedNode[] nodes = new MemcachedNode[servers.length];
 		
@@ -32,6 +34,8 @@ public class MemcachedNodeFactory {
 			
 			nodes[i] = new MemcachedNode(new InetSocketAddress(split[0], Integer.parseInt(split[1]))) ;
 		}
+		
+		
 		
 		locator = new ArrayModNodeLocator(nodes);
 	}

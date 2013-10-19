@@ -53,7 +53,6 @@ public abstract class StoreOperation extends BaseOperation {
 			write.addListener(new ChannelFutureListener() {
 				@Override
 				public void operationComplete(ChannelFuture future) throws Exception {
-					
 					ReplyHandler reply =  (ReplyHandler)future.getChannel().getPipeline().get("reply") ;
 					reply.enqueue(StoreOperation.this) ; 
 					
@@ -70,6 +69,7 @@ public abstract class StoreOperation extends BaseOperation {
 		
 		String line = line(buffer);
 		if(line != null ){
+			this.setStatus(Status.COMPLETE);
 			if(line.equals(MemcachedConstants.STORED)){
 				callback.complete(Boolean.TRUE) ;
 			}else if(line.equals(MemcachedConstants.NOTSTORED)){

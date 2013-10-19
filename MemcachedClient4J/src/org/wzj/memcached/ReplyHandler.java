@@ -29,9 +29,12 @@ public class ReplyHandler  extends SimpleChannelUpstreamHandler {
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e)
 			throws Exception {
 		
+		
 		if(cOperaction == null || cOperaction.getStatus() == Status.COMPLETE ){
 			cOperaction = oQueue.take() ;
 		}
+		
+		
 		
 		ChannelBuffer buffer = (ChannelBuffer) e.getMessage();
 		

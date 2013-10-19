@@ -37,7 +37,8 @@ public class ArrayModNodeLocator  implements NodeLocator {
 	}
 	
 	private int getServerForKey(String key ){
-		return key.hashCode()% allNodes.length  ;
+		int hashCode = key.hashCode();
+		return ( hashCode < 0  ? -hashCode : hashCode) % allNodes.length  ;
 	}
 	
 	
@@ -46,7 +47,7 @@ public class ArrayModNodeLocator  implements NodeLocator {
 		 int index ;
 		
 		 NodeIterator(int index ){
-			 this.index  = index ;
+			 this.index  = index   ;
 		 }
 
 		@Override
@@ -57,10 +58,10 @@ public class ArrayModNodeLocator  implements NodeLocator {
 		@Override
 		public MemcachedNode next() {
 			this.index  = this.index+1 ;
-			
 			if(this.index >= allNodes.length ){
 				this.index = 0 ;
 			}
+			
 			
 			return allNodes[this.index];
 		}

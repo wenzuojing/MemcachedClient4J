@@ -41,24 +41,14 @@ public class MemcachedNode {
 		channelFuture.awaitUninterruptibly() ;
 
 		channel = channelFuture.getChannel();
-
-		channel.getCloseFuture().addListener(new ChannelFutureListener() {
-
-			@Override
-			public void operationComplete(ChannelFuture future)
-					throws Exception {
-
-				destory();
-			}
-			
-			
-		});
-
 	}
 
 	public void destory() {
-		if (channel != null)
-			channel.close();
+		if (channel != null){
+			
+			channel.close().awaitUninterruptibly() ;
+		}
+			
 
 	}
 }

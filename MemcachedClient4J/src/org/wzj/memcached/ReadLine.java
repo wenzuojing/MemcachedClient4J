@@ -1,5 +1,7 @@
 package org.wzj.memcached;
 
+import java.io.ByteArrayOutputStream;
+
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 
@@ -10,7 +12,8 @@ import org.jboss.netty.buffer.ChannelBuffers;
  */
 public class ReadLine {
 	
-	private  ChannelBuffer   LFuffer  = ChannelBuffers.dynamicBuffer(64)  ;
+	//private  ChannelBuffer   LFuffer   ;
+	private ByteArrayOutputStream out   = new ByteArrayOutputStream(64) ;
 	
 	private boolean cr  = false  ;
 	
@@ -25,9 +28,11 @@ public class ReadLine {
 				if(b == '\n' && cr ){
 					cr = false ;
 					
-					String temp = LFuffer.toString(MemcachedConstants.DEFAULT_CHARSET) ;
 					
-					LFuffer.clear() ;
+					
+					String temp = new String(out.toByteArray() ,MemcachedConstants.DEFAULT_CHARSET ) ;  // LFuffer.toString(MemcachedConstants.DEFAULT_CHARSET) ;
+					
+					out.reset();
 					
 					return temp ;
 					
@@ -38,9 +43,7 @@ public class ReadLine {
 					continue ;
 				}
 				
-				LFuffer.writeByte(b) ;
-				
-				//sb.append(b) ;
+				out.write(b);
 			}
 			
 		}

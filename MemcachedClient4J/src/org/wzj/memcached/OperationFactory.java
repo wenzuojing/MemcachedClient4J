@@ -58,6 +58,9 @@ public class OperationFactory {
 
 	public Operaction createStore(String cmd, String key, Object value,
 			Date expiry, final OperationFutrue futrue) {
+		
+		
+		
 
 		if (cmd == null) {
 			throw new NullPointerException("cmd not must be  null !");
@@ -84,6 +87,7 @@ public class OperationFactory {
 			
 			return operation;
 		} else if (MemcachedConstants.CMD_SET == cmd) {
+			
 			Operaction operation = new SetOperation(key, value, expiryTime,
 					new Callback() {
 
@@ -92,6 +96,7 @@ public class OperationFactory {
 							futrue.setMsg(msg);
 						}
 					});
+			
 			futrue.setOperation(operation);
 
 			operation.setMemcachedNode(getAvailableMemcachedNode(key)) ;
