@@ -10,15 +10,15 @@ import java.util.Arrays;
  */
 public class CachedData {
 
-	public static final int MAX_SIZE = 20 * 1024 * 1024;
+	public static final int MAX_SIZE = 2 * 1024 * 1024;
 
 	private final int flags;
 	private final byte[] data;
 
-	public CachedData(int f, byte[] d, int maxSize) {
-		if (d.length > maxSize) {
+	public CachedData(int f, byte[] d ) {
+		if (d.length > MAX_SIZE) {
 			throw new IllegalArgumentException("Cannot cache data larger than "
-					+ maxSize + " bytes (you tried to cache a " + d.length
+					+ MAX_SIZE + " bytes (you tried to cache a " + d.length
 					+ " byte object)");
 		}
 		flags = f;

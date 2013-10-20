@@ -8,7 +8,8 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
-import org.wzj.memcached.Operaction.Status;
+import org.wzj.memcached.operation.Operaction;
+import org.wzj.memcached.operation.Operaction.Status;
 
 /**
  * 

@@ -1,4 +1,7 @@
-package org.wzj.memcached;
+package org.wzj.memcached.operation;
+
+import org.wzj.memcached.MemcachedConstants;
+import org.wzj.memcached.operation.BaseOperation.Callback;
 
 /**
  * 

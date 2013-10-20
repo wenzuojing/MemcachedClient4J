@@ -1,6 +1,12 @@
-package org.wzj.memcached;
+package org.wzj.memcached.operation;
 
 import java.util.concurrent.atomic.AtomicReference;
+
+import org.jboss.netty.channel.ChannelFuture;
+import org.jboss.netty.channel.ChannelFutureListener;
+import org.wzj.memcached.ReadLine;
+import org.wzj.memcached.ReplyHandler;
+import org.wzj.memcached.node.MemcachedNode;
 
 
 /**
@@ -78,6 +84,17 @@ public abstract class BaseOperation extends ReadLine implements Operaction {
 
 	public static interface Callback {
 		void complete(Object msg);
+	}
+	
+	protected class WriteCompleteListener implements  ChannelFutureListener {
+		@Override
+		public void operationComplete(ChannelFuture future)
+				throws Exception {
+			ReplyHandler reply = (ReplyHandler) future.getChannel()
+					.getPipeline().get("reply");
+			reply.enqueue(BaseOperation.this);
+
+		}
 	}
 
 }

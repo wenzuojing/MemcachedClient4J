@@ -3,7 +3,6 @@ package org.wzj.memcached;
 import java.io.ByteArrayOutputStream;
 
 import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
 
 /**
  * 

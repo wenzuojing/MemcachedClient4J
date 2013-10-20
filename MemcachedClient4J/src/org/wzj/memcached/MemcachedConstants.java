@@ -35,10 +35,13 @@ public class MemcachedConstants {
 		public static final String CMD_ADD ="add" ;
 		public static final String CMD_SET ="set" ;
 		public static final String CMD_REPLACE ="replace" ;
+		public static final String CMD_APPEND ="append" ; 
 		public static final String CMD_DELETE ="delete" ;
 		public static final String CMD_GET ="get" ;
 		public static final String CMD_INCR ="incr" ;
 		public static final String CMD_DECR ="decr" ;
+		public static final String CMD_STATS ="stats" ;
+		public static final String CMD_FLUSH ="flush_all" ;
 		
 		
 		public static final Charset DEFAULT_CHARSET  = Charset.forName("utf-8") ;

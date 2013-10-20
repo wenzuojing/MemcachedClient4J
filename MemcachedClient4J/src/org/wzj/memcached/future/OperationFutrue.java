@@ -1,4 +1,4 @@
-package org.wzj.memcached;
+package org.wzj.memcached.future;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -6,6 +6,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
+
+import org.wzj.memcached.operation.Operaction;
+
 
 /**
  * 
