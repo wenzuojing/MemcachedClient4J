@@ -234,6 +234,7 @@ public class OperationFactory {
 	}
 
 	public Operaction createFlush(String server, final OperationFutrue futrue) {
+		
 		String[] split = server.split("[:|(\\s)+]");
 
 		if (split.length != 2) {
