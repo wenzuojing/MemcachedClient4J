@@ -15,7 +15,7 @@ public class TestMemcachedClient4J {
 	
 	@Before
 	public void init(){
-		client =  new MemcachedClient(new String[]{"127.0.0.1:11211" } );
+		client =  new MemcachedClient(new String[]{"127.0.0.1:11211" ,"127.0.0.1:11211"} );
 	}
 	
 	@Test
@@ -33,6 +33,7 @@ public class TestMemcachedClient4J {
 	public void add() throws InterruptedException, ExecutionException{
 		
 		//this.flush(); 
+		client.flush("127.0.0.1:11211") ;
 		long start = System.currentTimeMillis() ;
 		boolean result = client.add("name", "wen zuojing") ;
 		long end = System.currentTimeMillis() ;
@@ -48,9 +49,12 @@ public class TestMemcachedClient4J {
 
 		client.flush("127.0.0.1:11211") ;
 		long start = System.currentTimeMillis() ;
-		boolean result = client.set("name", "wen zuojing") ;
-		long end = System.currentTimeMillis() ;
+		for(int i = 0 ; i < 1000 ; i++ ){
+			boolean result = client.set("name"+i, "wen zoujing");
 		Assert.assertTrue(result == true ) ;
+		}
+		long end = System.currentTimeMillis() ;
+		
 		System.out.println("set taken time : "+(end -start));
 		
 	}
