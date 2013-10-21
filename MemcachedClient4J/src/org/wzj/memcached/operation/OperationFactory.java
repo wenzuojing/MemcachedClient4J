@@ -59,17 +59,17 @@ public class OperationFactory {
 
 		return null;
 	}
-	
-	
+
 	private MemcachedNode getMemcachedNode(String server) {
-		Collection<MemcachedNode> allMemcachedNodes = this.memcachedNodeFactory.getAllMemcachedNodes();
-		
-		for(MemcachedNode node :allMemcachedNodes ){
-			if( node.getServerInfo().equals(server) ){
-				return node ;
+		Collection<MemcachedNode> allMemcachedNodes = this.memcachedNodeFactory
+				.getAllMemcachedNodes();
+
+		for (MemcachedNode node : allMemcachedNodes) {
+			if (node.getServerInfo().equals(server)) {
+				return node;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -144,7 +144,7 @@ public class OperationFactory {
 			operation.setMemcachedNode(getAvailableMemcachedNode(key));
 
 			return operation;
-		}else {
+		} else {
 			throw new IllegalArgumentException(
 					"Cmd may be 'add' , 'append' 'set' or 'replace' ");
 		}
@@ -170,8 +170,8 @@ public class OperationFactory {
 
 	public Operaction createIncrOrDecr(String cmd, String key, long inc,
 			final OperationFutrue futrue) {
-		
-		Operaction operation = new IncrOrDecrOperation(cmd , key, inc,
+
+		Operaction operation = new IncrOrDecrOperation(cmd, key, inc,
 				new Callback() {
 					@Override
 					public void complete(Object msg) {
@@ -187,14 +187,13 @@ public class OperationFactory {
 
 	public Operaction createDelete(String key, Date expiry,
 			final OperationFutrue futrue) {
-		
-		Operaction operation = new DeleteOperation( key, expiry,
-				new Callback() {
-					@Override
-					public void complete(Object msg) {
-						futrue.setMsg(msg);
-					}
-				});
+
+		Operaction operation = new DeleteOperation(key, expiry, new Callback() {
+			@Override
+			public void complete(Object msg) {
+				futrue.setMsg(msg);
+			}
+		});
 		futrue.setOperation(operation);
 
 		operation.setMemcachedNode(getAvailableMemcachedNode(key));
@@ -203,31 +202,30 @@ public class OperationFactory {
 	}
 
 	public Operaction createStats(String server, final OperationFutrue futrue) {
-		
+
+		String[] split = server.split("[:|(\\s)+]");
+
+		if (split.length != 2) {
+			throw new IllegalArgumentException(server + " is not illegal ");
+		}
+
 		MemcachedNode memcachedNode = getMemcachedNode(server);
-		
-		if(memcachedNode == null ){
-			
-			String[] split = server.split("[:|(\\s)+]") ;
-			
-			if(split.length != 2 ){
-				throw new IllegalArgumentException(server + " is not illegal ") ;
+
+		if (memcachedNode == null) {
+			throw new RuntimeException("not found " + server);
+
+		}
+
+		if (!memcachedNode.isConnected()) {
+			throw new IllegalStateException(server + " is not available ");
+		}
+
+		Operaction operation = new StatsOperation(new Callback() {
+			@Override
+			public void complete(Object msg) {
+				futrue.setMsg(msg);
 			}
-			
-			memcachedNode = new MemcachedNode(split[0] , Integer.parseInt(split[1])) ;
-		}
-		
-		if(!memcachedNode.isConnected()){
-			throw new IllegalStateException(server + " is not available ") ;
-		}
-		
-		Operaction operation = new StatsOperation( 
-				new Callback() {
-					@Override
-					public void complete(Object msg) {
-						futrue.setMsg(msg);
-					}
-				});
+		});
 		futrue.setOperation(operation);
 
 		operation.setMemcachedNode(memcachedNode);
@@ -235,38 +233,35 @@ public class OperationFactory {
 		return operation;
 	}
 
-	public Operaction createFlush(String server, final  OperationFutrue futrue) {
-MemcachedNode memcachedNode = getMemcachedNode(server);
-		
-		if(memcachedNode == null ){
-			
-			String[] split = server.split("[:|(\\s)+]") ;
-			
-			if(split.length != 2 ){
-				throw new IllegalArgumentException(server + " is not illegal ") ;
+	public Operaction createFlush(String server, final OperationFutrue futrue) {
+		String[] split = server.split("[:|(\\s)+]");
+
+		if (split.length != 2) {
+			throw new IllegalArgumentException(server + " is not illegal ");
+		}
+
+		MemcachedNode memcachedNode = getMemcachedNode(server);
+
+		if (memcachedNode == null) {
+			throw new RuntimeException("not found " + server);
+
+		}
+
+		if (!memcachedNode.isConnected()) {
+			throw new IllegalStateException(server + " is not available ");
+		}
+
+		Operaction operation = new FlushOperation(new Callback() {
+			@Override
+			public void complete(Object msg) {
+				futrue.setMsg(msg);
 			}
-			
-			memcachedNode = new MemcachedNode(split[0] , Integer.parseInt(split[1])) ;
-		}
-		
-		if(!memcachedNode.isConnected()){
-			throw new IllegalStateException(server + " is not available ") ;
-		}
-		
-		Operaction operation = new FlushOperation( 
-				new Callback() {
-					@Override
-					public void complete(Object msg) {
-						futrue.setMsg(msg);
-					}
-				});
+		});
 		futrue.setOperation(operation);
 
 		operation.setMemcachedNode(memcachedNode);
 
 		return operation;
 	}
-
-	
 
 }
