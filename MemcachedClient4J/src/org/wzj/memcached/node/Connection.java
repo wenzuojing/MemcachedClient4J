@@ -24,7 +24,7 @@ public class Connection {
 
 	private ClientBootstrap boostrap;
 	
-	private   AtomicBoolean init = new AtomicBoolean(false) ;
+	private   boolean init = false ;
 
 	private Connection() {
 
@@ -32,7 +32,7 @@ public class Connection {
 
 	public ChannelFuture connect(InetSocketAddress remoteAdd) {
 		
-		if(init.get() == false ){
+		if(init == false ){
 			throw new RuntimeException(" Not initialized ") ;
 		}
 		
@@ -45,23 +45,22 @@ public class Connection {
 	
 	public void shutdown(){
 		boostrap.releaseExternalResources();
+		
+		init = false ;
 	}
 
 	public void init(String[] servers) {
-		synchronized(init){
-			if(init.get() == false ){
-			channelFactory = new NioClientSocketChannelFactory(
-					Executors.newCachedThreadPool(),
-					Executors.newCachedThreadPool(),  servers.length   );
-			boostrap = new ClientBootstrap(channelFactory);
+		
+		if(init == true ) return ;
+		
+		channelFactory = new NioClientSocketChannelFactory(
+				Executors.newCachedThreadPool(),
+				Executors.newCachedThreadPool(),  servers.length   );
+		boostrap = new ClientBootstrap(channelFactory);
 
-			boostrap.setPipelineFactory(new MemcachedChannelPipelineFactory());
-			
-			init.set(true);
-		}
+		boostrap.setPipelineFactory(new MemcachedChannelPipelineFactory());
 		
-		}
-		
+		init  = true ;
 	}
 
 }
