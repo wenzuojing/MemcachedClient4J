@@ -51,7 +51,7 @@ public class Connection {
 
 	public void init(String[] servers) {
 		
-		if(init == true ) return ;
+		if(init) return ;
 		
 		channelFactory = new NioClientSocketChannelFactory(
 				Executors.newCachedThreadPool(),
