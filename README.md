@@ -1,7 +1,7 @@
 MemcachedClient4J
 ===========
 
-A written using netty3 framework mecached client, realize mecached ASCII protocol , performance more than Spymecached. There are many features and extension to be perfect. Provide both synchronous and asynchronous interfaces, use method is very simple, examples are as follows:
+A written using netty framework mecached client, realize mecached ASCII protocol , performance more than Spymecached. There are many features and extension to be perfect. Provide both synchronous and asynchronous interfaces, use method is very simple, examples are as follows:
 
 	MemcachedClient memcachedClient = new MemcachedClient(new String[]{"127.0.0.1:11211" }) ;
 	
