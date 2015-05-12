@@ -1,7 +1,7 @@
 package org.wzj.memcached.future;
 
 import org.wzj.memcached.MemcachedException;
-import org.wzj.memcached.operation.Operaction;
+import org.wzj.memcached.operation.Operation;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -12,25 +12,23 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * @author Wen
  */
-public class OperationFutrue<T> implements Future<T> {
-
-    private Operaction operation;
+public class OperationFuture<T> implements Future<T> {
 
     private AtomicReference<T> msg = new AtomicReference<T>();
 
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
-        return operation.cancel();
+        throw new UnsupportedOperationException() ;
     }
 
     @Override
     public boolean isCancelled() {
-        return operation.isCancelled();
+        throw new UnsupportedOperationException() ;
     }
 
     @Override
     public boolean isDone() {
-        return operation.isComplete();
+        return msg.get() == null ;
     }
 
     @Override
@@ -45,19 +43,14 @@ public class OperationFutrue<T> implements Future<T> {
     @Override
     public synchronized T get(long timeout, TimeUnit unit) throws TimeoutException {
         try {
-            wait(unit.toMillis(timeout));
+            while (this.msg.get() == null ){
+                wait(unit.toMillis(timeout));
+            }
         } catch (InterruptedException e) {
             //
         }
+
         return this.msg.get();
-    }
-
-    public Operaction getOperation() {
-        return operation;
-    }
-
-    public void setOperation(Operaction operation) {
-        this.operation = operation;
     }
 
     public synchronized void setMsg(T msg) {
