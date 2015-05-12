@@ -80,11 +80,11 @@ public class NettyConnection implements Connection {
     }
 
     @Override
-    public void send(Operation operaction) throws IOException {
-        doSend(operaction, 5);
+    public void send(Operation operation) throws IOException {
+        doSend(operation, 5);
     }
 
-    private void doSend(Operation operaction, int retry) {
+    private void doSend(Operation operation, int retry) {
         if (retry > 5) {
             throw new MemcachedException("No connections available");
         }
@@ -108,7 +108,7 @@ public class NettyConnection implements Connection {
         }
 
         if (channel != null) {
-            channel.writeAndFlush(operaction);
+            channel.writeAndFlush(operation);
         } else {
             throw new MemcachedException("No connections available for:" + host + ":" + port);
         }

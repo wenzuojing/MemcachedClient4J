@@ -2,7 +2,7 @@ package org.wzj.memcached.operation;
 
 import org.wzj.memcached.MemcachedConstants;
 
-public class FlushOperation extends BaseOperation<Boolean> {
+public class FlushOperation extends BaseOperation {
 
     public FlushOperation() {
         super(MemcachedConstants.CMD_FLUSH);
@@ -16,11 +16,10 @@ public class FlushOperation extends BaseOperation<Boolean> {
 
     @Override
     protected void reply(String reply) {
-        this.setStatus(Status.COMPLETE);
         if (reply.equals(MemcachedConstants.OK)) {
-            operationFuture.setResult(Boolean.TRUE);
+            this.setResult(Boolean.TRUE);
         } else {
-            operationFuture.setResult(Boolean.FALSE);
+            this.setResult(Boolean.FALSE);
         }
     }
 

@@ -4,22 +4,29 @@ package org.wzj.memcached.operation;
 import org.wzj.memcached.future.OperationFuture;
 import org.wzj.memcached.node.MemcachedNode;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 
 /**
  * @author Wen
  */
-public interface Operation<T> extends TextProtocol {
+public interface Operation extends TextProtocol {
 
     boolean isComplete();
 
-    void setStatus(Status status);
-
     void setMemcachedNode(MemcachedNode node);
 
-    OperationFuture<T> handle();
+    <T> OperationFuture<T> handle();
+
+    boolean cancel();
+
+    boolean isCancelled();
+
+    <T> T waitingHandleResult(long timeout, TimeUnit unit) throws TimeoutException;
 
     enum Status {
-        INITIALIZE, COMPLETE
+        INITIALIZE, HANDLING , COMPLETED ,CANCELED
     }
 
 

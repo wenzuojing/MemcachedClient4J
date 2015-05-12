@@ -2,7 +2,7 @@ package org.wzj.memcached.operation;
 
 import org.wzj.memcached.MemcachedConstants;
 
-public class IncrOrDecrOperation extends BaseOperation<Long> {
+public class IncrOrDecrOperation extends BaseOperation {
 
     private String key;
 
@@ -23,11 +23,10 @@ public class IncrOrDecrOperation extends BaseOperation<Long> {
 
     @Override
     protected void reply(String reply) {
-        this.setStatus(Status.COMPLETE);
         if (reply.matches("\\d+")) {
-            operationFuture.setResult(Long.valueOf(reply));
+            this.setResult(Long.valueOf(reply));
         } else { // It will return -1 , when not found or error
-            operationFuture.setResult(Long.valueOf(-1));
+            this.setResult(Long.valueOf(-1));
         }
     }
 

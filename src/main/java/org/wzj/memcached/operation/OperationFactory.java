@@ -12,13 +12,11 @@ import java.util.Date;
  */
 public class OperationFactory {
 
-    private int maxLoopNum;
 
     private MemcachedNodeFactory memcachedNodeFactory;
 
     public OperationFactory(MemcachedNodeFactory memcachedNodeFactory) {
         this.memcachedNodeFactory = memcachedNodeFactory;
-        maxLoopNum = this.memcachedNodeFactory.getAllMemcachedNodes().size() * 100;
     }
 
     private MemcachedNode getAvailableMemcachedNode(String key) {
@@ -38,7 +36,7 @@ public class OperationFactory {
         return null;
     }
 
-    public Operation<Boolean> createStore(String cmd, String key, Object value,
+    public Operation createStore(String cmd, String key, Object value,
                                           Date expiry) {
 
         if (cmd == null) {
@@ -52,23 +50,23 @@ public class OperationFactory {
 
         if (MemcachedConstants.CMD_ADD.equals(cmd)) {
 
-            Operation<Boolean> operation = new AddOperation(key, value, expiryTime);
+            Operation operation = new AddOperation(key, value, expiryTime);
             operation.setMemcachedNode(getAvailableMemcachedNode(key));
 
             return operation;
         } else if (MemcachedConstants.CMD_SET.equals(cmd)) {
 
-            Operation<Boolean> operation = new SetOperation(key, value, expiryTime);
+            Operation operation = new SetOperation(key, value, expiryTime);
             operation.setMemcachedNode(getAvailableMemcachedNode(key));
             return operation;
 
         } else if (MemcachedConstants.CMD_REPLACE.equals(cmd)) {
-            Operation<Boolean> operation = new ReplaceOperation(key, value, expiryTime);
+            Operation operation = new ReplaceOperation(key, value, expiryTime);
             operation.setMemcachedNode(getAvailableMemcachedNode(key));
 
             return operation;
         } else if (MemcachedConstants.CMD_APPEND.equals(cmd)) {
-            Operation<Boolean> operation = new AppendOperation(key, value, expiryTime);
+            Operation operation = new AppendOperation(key, value, expiryTime);
             operation.setMemcachedNode(getAvailableMemcachedNode(key));
 
             return operation;
@@ -78,33 +76,33 @@ public class OperationFactory {
         }
     }
 
-    public GetOperation createGet(String[] keys) {
+    public Operation createGet(String[] keys) {
 
         if (keys == null || keys.length == 0) {
             throw new IllegalArgumentException();
         }
-        GetOperation operation = new GetOperation(keys);
+        Operation operation = new GetOperation(keys);
         operation.setMemcachedNode(getAvailableMemcachedNode(keys[0]));
 
         return operation;
     }
 
-    public IncrOrDecrOperation createIncrOrDecr(String cmd, String key, long inc) {
+    public Operation createIncrOrDecr(String cmd, String key, long inc) {
 
-        IncrOrDecrOperation operation = new IncrOrDecrOperation(cmd, key, inc);
+        Operation operation = new IncrOrDecrOperation(cmd, key, inc);
         operation.setMemcachedNode(getAvailableMemcachedNode(key));
         return operation;
     }
 
-    public DeleteOperation createDelete(String key, Date expiry) {
+    public Operation createDelete(String key, Date expiry) {
 
-        DeleteOperation operation = new DeleteOperation(key, expiry);
+        Operation operation = new DeleteOperation(key, expiry);
         operation.setMemcachedNode(getAvailableMemcachedNode(key));
 
         return operation;
     }
 
-    public StatsOperation createStats(String server) {
+    public Operation createStats(String server) {
 
         String[] split = server.split("[:|(\\s)+]");
 
@@ -119,14 +117,14 @@ public class OperationFactory {
 
         }
 
-        StatsOperation operation = new StatsOperation();
+        Operation operation = new StatsOperation();
 
         operation.setMemcachedNode(memcachedNode);
 
         return operation;
     }
 
-    public FlushOperation createFlush(String server) {
+    public Operation createFlush(String server) {
 
         String[] split = server.split("[:|(\\s)+]");
 
@@ -141,8 +139,7 @@ public class OperationFactory {
 
         }
 
-
-        FlushOperation operation = new FlushOperation();
+        Operation operation = new FlushOperation();
         operation.setMemcachedNode(memcachedNode);
 
         return operation;

@@ -5,7 +5,7 @@ import org.wzj.memcached.MemcachedConstants;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StatsOperation extends BaseOperation<Map<String, String>> {
+public class StatsOperation extends BaseOperation {
 
     private Map<String, String> stats = new HashMap<String, String>();
 
@@ -28,10 +28,9 @@ public class StatsOperation extends BaseOperation<Map<String, String>> {
             String[] split = line.split(" ");
             stats.put(split[1], split[2]);
         } else if (line.equals(MemcachedConstants.END)) {
-            this.setStatus(Status.COMPLETE);
-            operationFuture.setResult(stats);
+            this.setResult(stats);
         } else {
-            operationFuture.setResult(null);
+            this.setResult(null);
         }
     }
 

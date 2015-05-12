@@ -13,7 +13,7 @@ public interface Connection {
 
     boolean isConnected();
 
-    void send(Operation operaction) throws IOException;
+    void send(Operation operation) throws IOException;
 
     void shutdown() throws IOException;
 

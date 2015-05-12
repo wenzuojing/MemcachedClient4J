@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 
 public class TestMemcachedClient4J {
@@ -153,24 +154,9 @@ public class TestMemcachedClient4J {
         long end = System.currentTimeMillis();
         Assert.assertTrue(stats.keySet().size() > 0);
         System.out.println("stats taken time : " + (end - start));
-
     }
 
 
-    //@Test
-    public void test_0() throws InterruptedException {
-        final MemcachedClient client = new MemcachedClient(new String[]{"127.0.0.1:11211"}, 100);
-        for (int i = 0; i < 300; i++) {
-            long age = client.incr("age");
-            System.out.println(age);
-            //client.asynIncr("age");
-        }
-
-        System.out.println("close");
-
-        client.shutdown();
-
-    }
 
 
 }

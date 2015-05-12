@@ -1,11 +1,12 @@
 package org.wzj.memcached.future;
 
 import org.wzj.memcached.MemcachedException;
+import org.wzj.memcached.operation.Operation;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
@@ -13,51 +14,40 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class OperationFuture<T> implements Future<T> {
 
-    private  volatile T result ;
-    private volatile boolean done = false ;
+    private Operation operation ;
+
+    public OperationFuture(Operation operation){
+        this.operation = operation ;
+
+    }
 
 
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
-        throw new UnsupportedOperationException();
+        return operation.cancel();
     }
 
     @Override
     public boolean isCancelled() {
-        throw new UnsupportedOperationException();
+        return operation.isCancelled();
     }
 
     @Override
     public boolean isDone() {
-        return done ;
+        return operation.isComplete() ;
     }
 
     @Override
-    public T get() {
+    public T get() throws InterruptedException, ExecutionException {
         try {
-            return this.get(60, TimeUnit.SECONDS);
+            return get( 600  ,TimeUnit.SECONDS );
         } catch (TimeoutException e) {
-            throw new MemcachedException("Timeout", e);
+            throw new MemcachedException("Timeout" , e );
         }
     }
 
     @Override
-    public synchronized T get(long timeout, TimeUnit unit) throws TimeoutException {
-        try {
-            while ( !done) {
-                wait(unit.toMillis(timeout));
-            }
-        } catch (InterruptedException e) {
-            //
-        }
-
-        return result ;
+    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        return operation.waitingHandleResult(timeout, unit);
     }
-
-    public synchronized void setResult(T result) {
-        this.result = result ;
-        this.done = true ;
-        notify();
-    }
-
 }

@@ -5,19 +5,31 @@ import org.wzj.memcached.future.OperationFuture;
 import org.wzj.memcached.node.MemcachedNode;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
  * @author Wen
  */
-public abstract class BaseOperation<T> implements Operation<T> {
+public abstract class BaseOperation implements Operation {
 
     protected String cmd;
     protected AtomicReference<Status> status = new AtomicReference<Status>();
     protected MemcachedNode node;
 
-    protected OperationFuture<T> operationFuture;
+    protected volatile Object result ;
+
+    @Override
+    public boolean cancel() {
+        return  status.compareAndSet(Status.INITIALIZE , Status.CANCELED ) ;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return status.get() == Status.INITIALIZE;
+    }
 
     /**
      * @param cmd
@@ -28,14 +40,9 @@ public abstract class BaseOperation<T> implements Operation<T> {
     }
 
 
-    public void setStatus(Status status) {
-        this.status.set(status);
-    }
-
-
     @Override
     public boolean isComplete() {
-        if (status.get() == Status.COMPLETE) {
+        if (status.get() == Status.COMPLETED) {
             return true;
         }
 
@@ -67,13 +74,45 @@ public abstract class BaseOperation<T> implements Operation<T> {
     }
 
     @Override
-    public OperationFuture<T> handle() {
+    public <T> OperationFuture<T> handle() {
         try {
-            operationFuture = new OperationFuture<>();
+            status.set(Status.HANDLING) ;
+            OperationFuture<T> operationFuture = new OperationFuture<T>(this);
             node.getConnction().send(this);
             return operationFuture;
         } catch (IOException e) {
             throw new MemcachedException(e);
         }
+    }
+
+    @Override
+    public  synchronized  <T> T waitingHandleResult(long timeout, TimeUnit unit) throws TimeoutException {
+
+        long start = System.currentTimeMillis() ;
+        timeout  = unit.toMillis(timeout) ;
+        while (status.get() != Status.COMPLETED) {
+            long ela = System.currentTimeMillis() - start;
+            if (timeout - ela > 0) {
+                try {
+                    wait(timeout - ela);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                throw new TimeoutException("Timeout");
+            }
+        }
+        return (T)result;
+    }
+
+
+    public synchronized void setResult(Object result) {
+        if( this.status.compareAndSet(Status.HANDLING , Status.COMPLETED)  ){
+            this.result = result;
+                notify();
+        }else{
+            throw new IllegalStateException( "Expected status is "+Status.HANDLING+", but the reality is "+this.status.get().name()) ;
+        }
+
     }
 }

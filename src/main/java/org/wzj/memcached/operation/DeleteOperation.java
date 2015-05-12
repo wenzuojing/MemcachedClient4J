@@ -4,7 +4,7 @@ import org.wzj.memcached.MemcachedConstants;
 
 import java.util.Date;
 
-public class DeleteOperation extends BaseOperation<Boolean> {
+public class DeleteOperation extends BaseOperation {
 
     private String key;
 
@@ -30,11 +30,10 @@ public class DeleteOperation extends BaseOperation<Boolean> {
 
     @Override
     protected void reply(String reply) {
-        this.setStatus(Status.COMPLETE);
         if (reply.equals(MemcachedConstants.DELETED)) {
-            operationFuture.setResult(Boolean.TRUE);
+            this.setResult(Boolean.TRUE);
         } else {
-            operationFuture.setResult(Boolean.FALSE);
+            this.setResult(Boolean.FALSE);
         }
     }
 

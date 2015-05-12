@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * @author Wen
  */
-public abstract class StoreOperation extends BaseOperation<Boolean> {
+public abstract class StoreOperation extends BaseOperation {
 
     protected String key;
 
@@ -58,13 +58,13 @@ public abstract class StoreOperation extends BaseOperation<Boolean> {
 
     @Override
     protected void reply(String reply) {
-        this.setStatus(Status.COMPLETE);
+
         if (reply.equals(MemcachedConstants.STORED)) {
-            operationFuture.setResult(Boolean.TRUE);
+            this.setResult(Boolean.TRUE);
         } else if (reply.equals(MemcachedConstants.NOTSTORED)) {
-            operationFuture.setResult(Boolean.FALSE);
+            this.setResult(Boolean.FALSE);
         } else { //error
-            operationFuture.setResult(Boolean.FALSE);
+            this.setResult(Boolean.FALSE);
         }
     }
 
