@@ -11,5 +11,6 @@ public interface ConnectListener {
 
     void onDisconnected(Channel channel);
 
-    void onOpened(Channel channel);
+
+    void onExceptionCaught(Channel channel);
 }

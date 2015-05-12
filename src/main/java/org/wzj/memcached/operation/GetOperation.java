@@ -7,7 +7,7 @@ import org.wzj.memcached.transcoder.TranscoderFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GetOperation extends BaseOperation {
+public class GetOperation extends BaseOperation<Map<String, Object>> {
 
     private String[] keys;
 
@@ -17,8 +17,8 @@ public class GetOperation extends BaseOperation {
 
     private volatile int dataBlockLength = -1;
 
-    public GetOperation(String[] keys, Callback callback) {
-        super(MemcachedConstants.CMD_GET, callback);
+    public GetOperation(String[] keys) {
+        super(MemcachedConstants.CMD_GET);
         this.keys = keys;
     }
 
@@ -46,7 +46,7 @@ public class GetOperation extends BaseOperation {
             dataBlockLength = Integer.parseInt(dataInfo[3]);
         } else if (line.startsWith(MemcachedConstants.END)) {
             this.setStatus(Status.COMPLETE);
-            callback.complete(dataMap);
+            operationFuture.setResult(dataMap);
         } else {
             throw new RuntimeException("server error");
         }

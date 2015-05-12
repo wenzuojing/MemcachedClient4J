@@ -1,7 +1,10 @@
 package org.wzj.memcached.node;
 
+import org.wzj.memcached.MemcachedException;
 import org.wzj.memcached.net.Connection;
 import org.wzj.memcached.net.netty.NettyConnection;
+
+import java.io.IOException;
 
 
 /**
@@ -18,7 +21,11 @@ public class MemcachedNode {
         this.host = host;
         this.port = port;
         connection = new NettyConnection(host, port, connSize);
-        connection.connect();
+        try {
+            connection.connect();
+        } catch (IOException e) {
+            throw new MemcachedException(e);
+        }
     }
 
     public Connection getConnction() {

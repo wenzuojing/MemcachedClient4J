@@ -10,14 +10,14 @@ import org.wzj.memcached.operation.Operation;
  */
 public class OperationEncoder extends MessageToByteEncoder<Operation> {
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, Operation operaction, ByteBuf byteBuf) throws Exception {
+    protected void encode(ChannelHandlerContext channelHandlerContext, Operation operation, ByteBuf byteBuf) throws Exception {
 
         ReplyHandler replyHandler = channelHandlerContext.pipeline().get(ReplyHandler.class);
 
-        byteBuf.writeBytes(operaction.buildCmd());
+        byteBuf.writeBytes(operation.buildCmd());
 
         if (replyHandler != null) {
-            replyHandler.pushWaitingForReplyQueue(operaction);
+            replyHandler.pushWaitingForReplyQueue(operation);
         }
 
     }

@@ -2,16 +2,15 @@ package org.wzj.memcached;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wzj.memcached.future.OperationFutrue;
+import org.wzj.memcached.future.OperationFuture;
 import org.wzj.memcached.node.MemcachedNode;
 import org.wzj.memcached.node.MemcachedNodeFactory;
-import org.wzj.memcached.operation.Operaction;
 import org.wzj.memcached.operation.OperationFactory;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @author Wen
@@ -53,17 +52,17 @@ public class MemcachedClient {
      */
     public boolean set(String key, Object value, Date expiry) {
 
-        OperationFutrue future = this.asynStore(MemcachedConstants.CMD_SET,
+        OperationFuture<Boolean> future = this.asynStore(MemcachedConstants.CMD_SET,
                 key, value, expiry);
         Boolean result = Boolean.FALSE;
         try {
-            result = (Boolean) future.get();
+            result = future.get();
 
         } catch (Exception e) {
             LOG.error("fail to get the result ", e);
         }
 
-        return result == null ? false : result.booleanValue();
+        return result == null ? false : result;
 
     }
 
@@ -74,7 +73,7 @@ public class MemcachedClient {
      * @param value value object to cache
      * @return future object
      */
-    public OperationFutrue asynSet(String key, Object value) {
+    public OperationFuture<Boolean> asynSet(String key, Object value) {
         return this.asynStore(MemcachedConstants.CMD_SET, key, value, null);
     }
 
@@ -86,7 +85,7 @@ public class MemcachedClient {
      * @param expiry expiration
      * @return future object
      */
-    public OperationFutrue asynSet(String key, Object value, Date expiry) {
+    public OperationFuture<Boolean> asynSet(String key, Object value, Date expiry) {
         return this.asynStore(MemcachedConstants.CMD_SET, key, value, expiry);
     }
 
@@ -111,14 +110,14 @@ public class MemcachedClient {
      */
     public boolean add(String key, Object value, Date expiry) {
         Boolean result = Boolean.FALSE;
-        OperationFutrue future = this.asynAdd(key, value, expiry);
+        OperationFuture<Boolean> future = this.asynAdd(key, value, expiry);
         try {
-            result = (Boolean) future.get();
+            result = future.get();
         } catch (Exception e) {
             LOG.error("fail to get the result ", e);
         }
 
-        return result == null ? false : result.booleanValue();
+        return result == null ? false : result;
     }
 
     /**
@@ -128,7 +127,7 @@ public class MemcachedClient {
      * @param value value object to cache
      * @return future object
      */
-    public OperationFutrue asynAdd(String key, Object value) {
+    public OperationFuture<Boolean> asynAdd(String key, Object value) {
         return this.asynStore(MemcachedConstants.CMD_ADD, key, value, null);
     }
 
@@ -140,7 +139,7 @@ public class MemcachedClient {
      * @param expiry expiration
      * @return future object
      */
-    public OperationFutrue asynAdd(String key, Object value, Date expiry) {
+    public OperationFuture<Boolean> asynAdd(String key, Object value, Date expiry) {
         return this.asynStore(MemcachedConstants.CMD_ADD, key, value, expiry);
     }
 
@@ -165,14 +164,14 @@ public class MemcachedClient {
      */
     public boolean replace(String key, Object value, Date expiry) {
         Boolean result = Boolean.FALSE;
-        OperationFutrue future = this.asynReplace(key, value, expiry);
+        OperationFuture<Boolean> future = this.asynReplace(key, value, expiry);
         try {
-            result = (Boolean) future.get();
+            result = future.get();
         } catch (Exception e) {
             LOG.error("fail to get the result ", e);
         }
 
-        return result == null ? false : result.booleanValue();
+        return result == null ? false : result;
     }
 
     /**
@@ -182,7 +181,7 @@ public class MemcachedClient {
      * @param value value object to cache
      * @return future object
      */
-    public OperationFutrue asynReplace(String key, Object value) {
+    public OperationFuture<Boolean> asynReplace(String key, Object value) {
 
         return this.asynStore(MemcachedConstants.CMD_REPLACE, key, value, null);
     }
@@ -195,9 +194,8 @@ public class MemcachedClient {
      * @param expiry expiration
      * @return future object
      */
-    public OperationFutrue asynReplace(String key, Object value, Date expiry) {
-
-        return this.asynStore(MemcachedConstants.CMD_REPLACE, key, value, null);
+    public OperationFuture<Boolean> asynReplace(String key, Object value, Date expiry) {
+        return this.asynStore(MemcachedConstants.CMD_REPLACE, key, value, expiry);
     }
 
     /**
@@ -221,14 +219,13 @@ public class MemcachedClient {
      */
     public boolean append(String key, Object value, Date expiry) {
         Boolean result = Boolean.FALSE;
-        OperationFutrue future = this.asynAppend(key, value, expiry);
+        OperationFuture<Boolean> future = this.asynAppend(key, value, expiry);
         try {
-            result = (Boolean) future.get();
+            result = future.get();
         } catch (Exception e) {
             LOG.error("fail to get the result ", e);
         }
-
-        return result == null ? false : result.booleanValue();
+        return result == null ? false : result;
     }
 
     /**
@@ -238,7 +235,7 @@ public class MemcachedClient {
      * @param value value object to cache
      * @return future object
      */
-    public OperationFutrue asynAppend(String key, Object value) {
+    public OperationFuture<Boolean> asynAppend(String key, Object value) {
 
         return this.asynStore(MemcachedConstants.CMD_APPEND, key, value, null);
     }
@@ -251,7 +248,7 @@ public class MemcachedClient {
      * @param expiry expiration
      * @return future object
      */
-    public OperationFutrue asynAppend(String key, Object value, Date expiry) {
+    public OperationFuture<Boolean> asynAppend(String key, Object value, Date expiry) {
 
         return this.asynStore(MemcachedConstants.CMD_APPEND, key, value, null);
     }
@@ -266,9 +263,9 @@ public class MemcachedClient {
     @SuppressWarnings("unchecked")
     public Map<String, String> stats(String server) {
         Map<String, String> result = null;
-        OperationFutrue future = this.asynStats(server);
+        OperationFuture<Map<String, String>> future = this.asynStats(server);
         try {
-            result = (Map<String, String>) future.get();
+            result = future.get();
         } catch (Exception e) {
             LOG.error("fail to get the result ", e);
         }
@@ -282,12 +279,8 @@ public class MemcachedClient {
      * @param server
      * @return future object
      */
-    public OperationFutrue asynStats(String server) {
-        OperationFutrue futrue = new OperationFutrue();
-        Operaction operation = oFactory.createStats(server, futrue);
-        operation.handle();
-
-        return futrue;
+    public OperationFuture<Map<String, String>> asynStats(String server) {
+        return oFactory.createStats(server).handle();
     }
 
     /**
@@ -298,14 +291,14 @@ public class MemcachedClient {
      */
     public boolean flush(String server) {
         Boolean result = Boolean.FALSE;
-        OperationFutrue future = this.asynFlush(server);
+        OperationFuture<Boolean> future = this.asynFlush(server);
         try {
-            result = (Boolean) future.get();
+            result = future.get();
         } catch (Exception e) {
             LOG.error("fail to get the result ", e);
         }
 
-        return result.booleanValue();
+        return result;
     }
 
     /**
@@ -314,12 +307,8 @@ public class MemcachedClient {
      * @param server specified server ,example 127.0.0.1:11211
      * @return future object
      */
-    public OperationFutrue asynFlush(String server) {
-        OperationFutrue futrue = new OperationFutrue();
-        Operaction operation = oFactory.createFlush(server, futrue);
-        operation.handle();
-
-        return futrue;
+    public OperationFuture<Boolean> asynFlush(String server) {
+        return oFactory.createFlush(server).handle();
     }
 
     /**
@@ -339,12 +328,11 @@ public class MemcachedClient {
      * @param keys keys where data is stored
      * @return the map object that was previously stored
      */
-    @SuppressWarnings("unchecked")
     public Map<String, Object> gets(String... keys) {
         Map<String, Object> result = null;
-        OperationFutrue future = this.asynGets(keys);
+        OperationFuture<Map<String, Object>> future = this.asynGets(keys);
         try {
-            result = (Map<String, Object>) future.get();
+            result = future.get();
         } catch (Exception e) {
             LOG.error("fail to get the result ", e);
         }
@@ -358,8 +346,7 @@ public class MemcachedClient {
      * @param key key where data is stored
      * @return future object
      */
-    public OperationFutrue asynGet(String key) {
-
+    public OperationFuture<Map<String, Object>> asynGet(String key) {
         return this.asynGet(new String[]{key});
     }
 
@@ -369,7 +356,7 @@ public class MemcachedClient {
      * @param keys keys where data is stored
      * @return future object
      */
-    public OperationFutrue asynGets(String... keys) {
+    public OperationFuture<Map<String, Object>> asynGets(String... keys) {
         return this.asynGet(keys);
     }
 
@@ -392,14 +379,14 @@ public class MemcachedClient {
      */
     public boolean delete(String key, Date expiry) {
         Boolean result = Boolean.FALSE;
-        OperationFutrue future = this.asynDelete(key, expiry);
+        OperationFuture<Boolean> future = this.asynDelete(key, expiry);
         try {
-            result = (Boolean) future.get();
+            result = future.get();
         } catch (Exception e) {
             LOG.error("fail to get the result ", e);
         }
 
-        return result.booleanValue();
+        return result;
     }
 
     /**
@@ -408,7 +395,7 @@ public class MemcachedClient {
      * @param key the key to be removed
      * @return future object
      */
-    public OperationFutrue asynDelete(String key) {
+    public OperationFuture<Boolean> asynDelete(String key) {
         return this.asynDelete(key, null);
     }
 
@@ -419,14 +406,8 @@ public class MemcachedClient {
      * @param expiry when to expire the record
      * @return future object
      */
-    public OperationFutrue asynDelete(String key, Date expiry) {
-
-        OperationFutrue futrue = new OperationFutrue();
-        Operaction operation = oFactory.createDelete(key, expiry, futrue);
-
-        operation.handle();
-
-        return futrue;
+    public OperationFuture<Boolean> asynDelete(String key, Date expiry) {
+        return oFactory.createDelete(key, expiry).handle();
     }
 
     /**
@@ -448,15 +429,15 @@ public class MemcachedClient {
      */
     public long incr(String key, long inc) {
         Long result = Long.valueOf(-1);
-        OperationFutrue future = this.asynIncr(key, inc);
+        OperationFuture<Long> future = this.asynIncr(key, inc);
 
         try {
-            result = (Long) future.get();
+            result = future.get();
         } catch (Exception e) {
             LOG.error("fail to get the result ", e);
         }
 
-        return result.longValue();
+        return result;
     }
 
     /**
@@ -465,7 +446,7 @@ public class MemcachedClient {
      * @param key key where the data is stored
      * @return future object
      */
-    public OperationFutrue asynIncr(String key) {
+    public OperationFuture<Long> asynIncr(String key) {
         return asynIncr(key, 1L);
     }
 
@@ -476,7 +457,7 @@ public class MemcachedClient {
      * @param inc how much to increment by
      * @return future object
      */
-    public OperationFutrue asynIncr(String key, long inc) {
+    public OperationFuture<Long> asynIncr(String key, long inc) {
         return asyncIncrOrDecr(MemcachedConstants.CMD_INCR, key, inc);
     }
 
@@ -499,14 +480,14 @@ public class MemcachedClient {
      */
     public long decr(String key, long inc) {
         Long result = Long.valueOf(-1);
-        OperationFutrue future = this.asynDecr(key, inc);
+        OperationFuture<Long> future = this.asynDecr(key, inc);
         try {
-            result = (Long) future.get();
+            result = future.get();
         } catch (Exception e) {
             LOG.error("fail to get the result ", e);
         }
 
-        return result.longValue();
+        return result;
     }
 
     /**
@@ -515,7 +496,7 @@ public class MemcachedClient {
      * @param key key where the data is stored
      * @return future object
      */
-    public OperationFutrue asynDecr(String key) {
+    public OperationFuture<Long> asynDecr(String key) {
         return asynDecr(key, 1L);
     }
 
@@ -526,39 +507,20 @@ public class MemcachedClient {
      * @param inc how much to decrement by
      * @return future object
      */
-    public OperationFutrue asynDecr(String key, long inc) {
+    public OperationFuture<Long> asynDecr(String key, long inc) {
         return asyncIncrOrDecr(MemcachedConstants.CMD_DECR, key, inc);
     }
 
-    private OperationFutrue asynStore(String cmd, String key, Object value,
-                                      Date expiry) {
-        OperationFutrue futrue = new OperationFutrue();
-
-        Operaction operation = oFactory.createStore(cmd, key, value, expiry,
-                futrue);
-
-        operation.handle();
-
-        return futrue;
+    private OperationFuture<Boolean> asynStore(String cmd, String key, Object value, Date expiry) {
+        return oFactory.createStore(cmd, key, value, expiry).handle();
     }
 
-    private OperationFutrue asynGet(String[] keys) {
-
-        OperationFutrue futrue = new OperationFutrue();
-
-        Operaction operation = oFactory.createGet(keys, futrue);
-        operation.handle();
-        return futrue;
+    private OperationFuture<Map<String, Object>> asynGet(String[] keys) {
+        return oFactory.createGet(keys).handle();
     }
 
-    private OperationFutrue asyncIncrOrDecr(String cmd, String key, long inc) {
-
-        OperationFutrue futrue = new OperationFutrue();
-
-        Operaction operation = oFactory.createIncrOrDecr(cmd, key, inc, futrue);
-        operation.handle();
-
-        return futrue;
+    private OperationFuture<Long> asyncIncrOrDecr(String cmd, String key, long inc) {
+        return oFactory.createIncrOrDecr(cmd, key, inc).handle();
     }
 
     /**
@@ -566,8 +528,17 @@ public class MemcachedClient {
      */
     public void shutdown() {
         Collection<MemcachedNode> allMemcachedNodes = memcachedNodeFactory.getAllMemcachedNodes();
+        Throwable throwable = null;
         for (MemcachedNode node : allMemcachedNodes) {
-            node.getConnction().shutdown();
+            try {
+                node.getConnction().shutdown();
+            } catch (IOException e) {
+                throwable = e;
+            }
+        }
+
+        if (throwable != null) {
+            throw new MemcachedException(throwable);
         }
     }
 

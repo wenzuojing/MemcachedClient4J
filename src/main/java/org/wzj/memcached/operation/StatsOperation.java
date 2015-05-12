@@ -5,12 +5,12 @@ import org.wzj.memcached.MemcachedConstants;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StatsOperation extends BaseOperation {
+public class StatsOperation extends BaseOperation<Map<String, String>> {
 
     private Map<String, String> stats = new HashMap<String, String>();
 
-    public StatsOperation(Callback callback) {
-        super(MemcachedConstants.CMD_STATS, callback);
+    public StatsOperation() {
+        super(MemcachedConstants.CMD_STATS);
     }
 
     @Override
@@ -27,12 +27,11 @@ public class StatsOperation extends BaseOperation {
         if (line.startsWith(MemcachedConstants.STATS)) {
             String[] split = line.split(" ");
             stats.put(split[1], split[2]);
-
         } else if (line.equals(MemcachedConstants.END)) {
             this.setStatus(Status.COMPLETE);
-            callback.complete(stats);
+            operationFuture.setResult(stats);
         } else {
-            callback.complete(null);
+            operationFuture.setResult(null);
         }
     }
 

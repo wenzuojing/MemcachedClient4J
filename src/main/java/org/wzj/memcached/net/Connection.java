@@ -1,6 +1,6 @@
 package org.wzj.memcached.net;
 
-import org.wzj.memcached.operation.Operaction;
+import org.wzj.memcached.operation.Operation;
 
 import java.io.IOException;
 
@@ -9,13 +9,13 @@ import java.io.IOException;
  */
 public interface Connection {
 
-    void connect();
+    void connect() throws IOException;
 
     boolean isConnected();
 
-    void send(Operaction operaction) throws IOException;
+    void send(Operation operaction) throws IOException;
 
-    void shutdown();
+    void shutdown() throws IOException;
 
 
 }

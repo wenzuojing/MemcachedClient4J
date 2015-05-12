@@ -1,18 +1,13 @@
 package org.wzj.memcached.net.netty;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import org.wzj.memcached.MemcachedException;
 import org.wzj.memcached.net.Connection;
-import org.wzj.memcached.operation.Operaction;
+import org.wzj.memcached.operation.Operation;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,7 +40,7 @@ public class NettyConnection implements Connection {
         this.host = host;
         this.port = port;
         counter = new AtomicLong(0);
-        EventLoopGroup group = new NioEventLoopGroup();
+        EventLoopGroup group = new NioEventLoopGroup(connSize);
         bootstrap = new Bootstrap();
         bootstrap.group(group)
                 .channel(NioSocketChannel.class)
@@ -54,24 +49,26 @@ public class NettyConnection implements Connection {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline p = ch.pipeline();
                         //p.addLast(new LoggingHandler(LogLevel.INFO));
-                        p.addLast(new ConnnectHandler(new Listener()));
-                        p.addLast(new OperactionEncoder());
+                        p.addLast(new ConnectHandler(new Listener()));
+                        p.addLast(new OperationEncoder());
                         p.addLast(new ReplyHandler());
-
 
                     }
                 });
 
+        bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+        bootstrap.option(ChannelOption.TCP_NODELAY, false);
+
 
     }
 
-    public void shutdown() {
+    public void shutdown() throws IOException {
         bootstrap.group().shutdownGracefully();
     }
 
 
     @Override
-    public void connect() {
+    public void connect() throws IOException {
         for (int i = 0; i < connSize; i++) {
             bootstrap.connect(host, port);
         }
@@ -83,18 +80,18 @@ public class NettyConnection implements Connection {
     }
 
     @Override
-    public void send(Operaction operaction) throws IOException {
-        doSend(operaction , 5);
+    public void send(Operation operaction) throws IOException {
+        doSend(operaction, 5);
     }
 
-    private void doSend(Operaction operaction , int retry) {
-        if(retry > 5 ){
+    private void doSend(Operation operaction, int retry) {
+        if (retry > 5) {
             throw new MemcachedException("No connections available");
         }
 
-        Channel channel = null ;
+        Channel channel = null;
 
-        for (int i =0 ; i < retry  ; i++ ){
+        for (int i = 0; i < retry; i++) {
             long l = counter.incrementAndGet();
             List<Channel> chanels = getChanels();
             if (chanels.size() == 0) {
@@ -110,10 +107,10 @@ public class NettyConnection implements Connection {
             }
         }
 
-        if(channel != null ){
-            channel.writeAndFlush(operaction) ;
-        }else{
-            throw new MemcachedException("No connections available");
+        if (channel != null) {
+            channel.writeAndFlush(operaction);
+        } else {
+            throw new MemcachedException("No connections available for:" + host + ":" + port);
         }
     }
 
@@ -128,12 +125,13 @@ public class NettyConnection implements Connection {
     }
 
     public synchronized void removeChanel(Channel channel) {
-        chanels.add(channel);
+        chanels.remove(channel);
     }
 
     private class Listener implements ConnectListener {
         @Override
         public void onConnected(Channel channel) {
+            addChanel(channel);
         }
 
         @Override
@@ -142,9 +140,10 @@ public class NettyConnection implements Connection {
         }
 
         @Override
-        public void onOpened(Channel channel) {
-            addChanel(channel);
+        public void onExceptionCaught(Channel channel) {
+            removeChanel(channel);
         }
+
     }
 
 

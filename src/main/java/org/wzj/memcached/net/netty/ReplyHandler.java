@@ -3,7 +3,7 @@ package org.wzj.memcached.net.netty;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import org.wzj.memcached.operation.Operaction;
+import org.wzj.memcached.operation.Operation;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -14,9 +14,9 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public class ReplyHandler extends ByteToMessageDecoder {
 
-    private BlockingQueue<Operaction> waitingForReplyQueue = new LinkedBlockingDeque<Operaction>();
+    private BlockingQueue<Operation> waitingForReplyQueue = new LinkedBlockingDeque<Operation>();
 
-    private volatile Operaction operaction;
+    private volatile Operation operaction;
 
 
     @Override
@@ -35,7 +35,7 @@ public class ReplyHandler extends ByteToMessageDecoder {
             }
         } else {
             String line = readLine(byteBuf);
-            if(line != null)
+            if (line != null)
                 operaction.setReply(line);
         }
     }
@@ -63,7 +63,8 @@ public class ReplyHandler extends ByteToMessageDecoder {
         return null;
     }
 
-    public void pushWaitingForReplyQueue(Operaction operaction) {
+    public void pushWaitingForReplyQueue(Operation operaction) {
+
         waitingForReplyQueue.offer(operaction);
     }
 }

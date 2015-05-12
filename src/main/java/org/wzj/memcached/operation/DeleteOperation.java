@@ -4,14 +4,14 @@ import org.wzj.memcached.MemcachedConstants;
 
 import java.util.Date;
 
-public class DeleteOperation extends BaseOperation {
+public class DeleteOperation extends BaseOperation<Boolean> {
 
     private String key;
 
     private Date expiry;
 
-    public DeleteOperation(String key, Date expiry, Callback callback) {
-        super(MemcachedConstants.CMD_DELETE, callback);
+    public DeleteOperation(String key, Date expiry) {
+        super(MemcachedConstants.CMD_DELETE);
         this.key = key;
         this.expiry = expiry;
     }
@@ -32,9 +32,9 @@ public class DeleteOperation extends BaseOperation {
     protected void reply(String reply) {
         this.setStatus(Status.COMPLETE);
         if (reply.equals(MemcachedConstants.DELETED)) {
-            callback.complete(Boolean.TRUE);
+            operationFuture.setResult(Boolean.TRUE);
         } else {
-            callback.complete(Boolean.FALSE);
+            operationFuture.setResult(Boolean.FALSE);
         }
     }
 

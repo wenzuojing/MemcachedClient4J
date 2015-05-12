@@ -2,7 +2,6 @@ package org.wzj.memcached.node;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 
 
 /**
@@ -31,7 +30,6 @@ public class ArrayModNodeLocator implements NodeLocator {
         int hashCode = key.hashCode();
         return (hashCode < 0 ? -hashCode : hashCode) % allNodes.length;
     }
-
 
 
 }

@@ -8,7 +8,7 @@ import org.wzj.memcached.MemcachedConstants;
  */
 public class ReplaceOperation extends StoreOperation {
 
-    public ReplaceOperation(String key, Object value, int expiry, Callback callback) {
-        super(MemcachedConstants.CMD_REPLACE, key, value, expiry, callback);
+    public ReplaceOperation(String key, Object value, int expiry) {
+        super(MemcachedConstants.CMD_REPLACE, key, value, expiry);
     }
 }

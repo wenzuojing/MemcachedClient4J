@@ -1,6 +1,7 @@
 package org.wzj.memcached.operation;
 
 import org.wzj.memcached.MemcachedException;
+import org.wzj.memcached.future.OperationFuture;
 import org.wzj.memcached.node.MemcachedNode;
 
 import java.io.IOException;
@@ -10,45 +11,27 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * @author Wen
  */
-public abstract class BaseOperation implements Operaction {
+public abstract class BaseOperation<T> implements Operation<T> {
 
     protected String cmd;
-
     protected AtomicReference<Status> status = new AtomicReference<Status>();
-
     protected MemcachedNode node;
 
-    protected Callback callback;
-
+    protected OperationFuture<T> operationFuture;
 
     /**
      * @param cmd
      */
-    public BaseOperation(String cmd, Callback callback) {
+    public BaseOperation(String cmd) {
         this.cmd = cmd;
         status.set(Status.INITIALIZE);
-        this.callback = callback;
     }
 
 
-    public Status getStatus() {
-        return status.get();
+    public void setStatus(Status status) {
+        this.status.set(status);
     }
 
-    public void setStatus(Status newStatus) {
-        status.set(newStatus);
-    }
-
-
-    @Override
-    public boolean isCancelled() {
-
-        if (status.get() == Status.CANCELLE) {
-            return true;
-        }
-
-        return false;
-    }
 
     @Override
     public boolean isComplete() {
@@ -59,24 +42,9 @@ public abstract class BaseOperation implements Operaction {
         return false;
     }
 
-    @Override
-    public synchronized boolean cancel() {
-
-        if (status.get() == Status.INITIALIZE) {
-            status.set(Status.CANCELLE);
-            return true;
-        }
-
-        return false;
-    }
-
 
     public void setMemcachedNode(MemcachedNode node) {
         this.node = node;
-    }
-
-    public interface Callback {
-        void complete(Object msg);
     }
 
     @Override
@@ -99,9 +67,11 @@ public abstract class BaseOperation implements Operaction {
     }
 
     @Override
-    public void handle() {
+    public OperationFuture<T> handle() {
         try {
+            operationFuture = new OperationFuture<>();
             node.getConnction().send(this);
+            return operationFuture;
         } catch (IOException e) {
             throw new MemcachedException(e);
         }

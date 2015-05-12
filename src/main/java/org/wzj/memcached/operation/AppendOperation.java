@@ -7,7 +7,7 @@ import org.wzj.memcached.MemcachedConstants;
  */
 public class AppendOperation extends StoreOperation {
 
-    public AppendOperation(String key, Object value, int expiry, Callback callback) {
-        super(MemcachedConstants.CMD_APPEND, key, value, expiry, callback);
+    public AppendOperation(String key, Object value, int expiry) {
+        super(MemcachedConstants.CMD_APPEND, key, value, expiry);
     }
 }

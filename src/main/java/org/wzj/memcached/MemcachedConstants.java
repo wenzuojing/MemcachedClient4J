@@ -46,7 +46,6 @@ public class MemcachedConstants {
     // default compression threshold
     public static final int DEFAULT_COMPRESSION_THRESHOLD = 30720;
 
-    public static final int DEFAULT_OPERATION_TIME_SEC = 2;
 
 
 }

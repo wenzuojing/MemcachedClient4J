@@ -1,7 +1,7 @@
 package org.wzj.memcached.net.netty;
 
+import junit.framework.Assert;
 import org.junit.Test;
-import org.wzj.memcached.operation.FlushOperation;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -13,16 +13,17 @@ public class NettyConnectTest {
 
     @Test
     public void test_0() throws InterruptedException, IOException {
-        NettyConnection connection = new NettyConnection("localhost", 11211, 1 );
-
+        NettyConnection connection = new NettyConnection("localhost", 11211, 1);
         connection.connect();
         TimeUnit.SECONDS.sleep(1);
+        Assert.assertEquals(true, connection.isConnected());
+    }
 
-        System.out.println(connection.isConnected());
-
-        connection.send(new FlushOperation(null)) ;
-
-        TimeUnit.HOURS.sleep(1);
-
+    @Test
+    public void test_1() throws InterruptedException, IOException {
+        NettyConnection connection = new NettyConnection("localhost", 11211, 10);
+        connection.connect();
+        TimeUnit.SECONDS.sleep(1);
+        Assert.assertEquals(true, connection.isConnected());
     }
 }

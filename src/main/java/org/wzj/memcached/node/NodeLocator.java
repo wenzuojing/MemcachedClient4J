@@ -1,7 +1,6 @@
 package org.wzj.memcached.node;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 
 /**

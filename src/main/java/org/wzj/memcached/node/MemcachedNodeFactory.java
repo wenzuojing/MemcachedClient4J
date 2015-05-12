@@ -1,8 +1,6 @@
 package org.wzj.memcached.node;
 
-import java.net.InetSocketAddress;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * @author Wen
@@ -30,7 +28,7 @@ public class MemcachedNodeFactory {
                 throw new IllegalArgumentException(server + " is not illegal ");
             }
 
-            nodes[i] = new MemcachedNode( split[0] , Integer.parseInt( split[1] ) , connSize);
+            nodes[i] = new MemcachedNode(split[0], Integer.parseInt(split[1]), connSize);
         }
 
         locator = new ArrayModNodeLocator(nodes);
